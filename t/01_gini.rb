@@ -13,6 +13,11 @@ class TestGini < Test::Unit::TestCase
 			['yellow', 3, 'lemon'],
 		]
 		ginis = split_set( test_data )
-		assert_equal([{:blah => 1}, {:foo => 2}], ginis, "Created ginis structure")
+		assert_equal({
+			:split_on => "Index 0 is red",
+			:right_set => [["red", 1, "grape"], ["red", 1, "grape"]],
+			:left_set => [["green", 3, "apple"], ["yellow", 3, "apple"], ["yellow", 3, "lemon"]],
+			:info_gain => 0.37333333333333324,
+		}, ginis, "Created ginis structure")
 	end
 end
