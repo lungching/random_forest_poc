@@ -50,12 +50,16 @@ module Gini
 				avg_impurity       = avg_impurity_right + avg_impurity_left
 				info_gain          = init_impurity - avg_impurity
 
-				if split_info[:info_gain] < info_gain
+				if split_info[:info_gain] <= info_gain
 					split_info[:info_gain] = info_gain
-					split_info[:left_set] = left_set
+					split_info[:left_set]  = left_set
 					split_info[:right_set] = right_set
-					split_info[:split_on] = "Index #{index} is #{val.instance_of?(String) ? '' : '>='}#{val}"
 
+					if info_gain > 0
+						split_info[:split_on] = "Index #{index} is #{val.instance_of?(String) ? '' : '>= '}#{val}"
+					else
+						split_info[:split_on] = [left_labels,right_labels].flatten.uniq.join(", ")
+					end
 				end
 			end
 		end

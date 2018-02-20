@@ -14,10 +14,24 @@ class TestGini < Test::Unit::TestCase
 		]
 		ginis = split_set( test_data )
 		assert_equal({
-			:split_on => "Index 0 is red",
-			:right_set => [["red", 1, "grape"], ["red", 1, "grape"]],
-			:left_set => [["green", 3, "apple"], ["yellow", 3, "apple"], ["yellow", 3, "lemon"]],
+			:split_on => "Index 1 is >= 3",
+			:left_set => [["red", 1, "grape"], ["red", 1, "grape"]],
+			:right_set => [["green", 3, "apple"], ["yellow", 3, "apple"], ["yellow", 3, "lemon"]],
 			:info_gain => 0.37333333333333324,
 		}, ginis, "Created ginis structure")
+	end
+	
+	def test_leaf_label()
+		test_data = [
+			['red', 1, 'grape'],
+			['red', 1, 'grape'],
+		]
+		ginis = split_set( test_data )
+		assert_equal({
+			:split_on => "grape",
+			:info_gain => 0.0,
+			:right_set => [['red',1,'grape'], ['red',1,'grape']],
+			:left_set => [],
+		}, ginis, "split label is only the list of unique labels")
 	end
 end
