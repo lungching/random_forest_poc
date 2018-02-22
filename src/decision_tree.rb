@@ -11,7 +11,7 @@ class DecisionTree
 
 	def build_tree(set)
 		split = split_set(set)
-		node = Node.new(nil, nil, split[:split_on], split[:label_list])
+		node = Node.new(nil, nil, split[:split_on], split[:labels])
 
 		# is leaf
 		if split[:info_gain] != 0
@@ -29,8 +29,13 @@ class DecisionTree
 		level.times do
 			tabs += "\t"
 		end
-		puts "#{tabs}#{node.split_on}"
-		
+
+		if node.is_leaf?
+			puts "#{tabs}#{node.display_labels}"
+		else
+			puts "#{tabs}#{node.display_split_on}"
+		end
+
 		if node.left
 			pretty_print( node.left, level)
 		end

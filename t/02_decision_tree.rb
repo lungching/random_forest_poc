@@ -14,12 +14,15 @@ class TestTree < Test::Unit::TestCase
 		dTree = DecisionTree.new
 		node = dTree.build_tree( test_data )
 
-		#dTree.pretty_print( node )
-		assert_equal("Index 1 is >= 3", node.split_on, "root node split")
-		assert_equal("grape", node.left.split_on, "root's left node split")
-		assert_equal("Index 0 is yellow", node.right.split_on, "root's right node split")
-		assert_equal("apple", node.right.left.split_on, "root's right's left node split")
-		assert_equal("apple, lemon", node.right.right.split_on, "root's right's right node split")
+		dTree.pretty_print( node )
+		assert_equal([1,3], node.split_on, "root node split")
+		assert_equal("", node.left.split_on, "root's left node split is blank")
+		assert_equal([["grape", 1.0]], node.left.labels, "root's left node label")
+		assert_equal([0, "yellow"], node.right.split_on, "root's right node split")
+		assert_equal("", node.right.left.split_on, "root's right's left node split is blank")
+		assert_equal([["apple", 1.0]], node.right.left.labels, "root's right's left node label")
+		assert_equal("", node.right.right.split_on, "root's right's right node split is blank")
+		assert_equal([["apple", 0.5], ["lemon", 0.5]], node.right.right.labels, "root's right's right node label")
 	end
 end
 

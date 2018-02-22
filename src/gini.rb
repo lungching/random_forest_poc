@@ -56,9 +56,9 @@ module Gini
 					split_info[:right_set] = right_set
 
 					if info_gain > 0
-						split_info[:split_on] = "Index #{index} is #{val.instance_of?(String) ? '' : '>= '}#{val}"
+						split_info[:split_on] = [index, val]
 					else
-						split_info[:split_on] = [left_labels,right_labels].flatten.uniq.join(", ")
+						split_info[:labels] = label_list( [left_labels,right_labels].flatten )
 					end
 				end
 			end
@@ -67,6 +67,8 @@ module Gini
 		return split_info
 	end
 	
+	# compile count of each label, sum for each unique label the value of ( its count / total count )^2
+	# the impurity is 1 minus the sum
 	def calc_impurity(labels)
 		count = labels.length.to_f
 		count_of_each = Hash.new(0)
@@ -81,5 +83,23 @@ module Gini
 		end
 
 		return 1 - sum
+	end
+
+	# return an array of arrays where each row is an array with the first element is the label and the second is the confidence
+	# the confidence is calculated by summing the count of each instance of labels and dividing by the total size of the list
+	def label_list( labels )
+		list_size = labels.count
+
+		label_count = Hash.new(0)
+		labels.each do | label |
+			label_count[label] += 1.0
+		end
+		
+		compiled_labels = []
+		label_count.keys.each do | key |
+			compiled_labels.push( [key, label_count[key] / list_size ] )
+		end
+
+		return compiled_labels
 	end
 end
