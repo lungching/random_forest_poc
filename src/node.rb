@@ -37,5 +37,20 @@ class Node
 	end
 
 	def vote
+		return unless self.is_leaf?
+
+		highest_conf = 0.0
+		contenders = []
+		labels.each do | label, confidence |
+			if confidence > highest_conf
+				highest_conf = confidence
+				contenders = [ label ]
+			elsif confidence == highest_conf
+				contenders.push( label )
+			end
+		end
+
+		# of the labels, all with the highest confidence value, return a random one
+		return contenders.sample
 	end
 end
