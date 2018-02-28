@@ -19,19 +19,19 @@ module Gini
 		# find the impurity  of each set
 
 		split_info = {
-			:split_on => '',
-			:left_set => [],
-			:right_set => [],
-			:info_gain => 0,
+			split_on: '',
+			left_set: [],
+			right_set: [],
+			info_gain: 0,
 		}
 		attrs.keys.each do |index|
 			values = attrs[index].keys
 			values.each do |val|
-				left_set = []
-				right_set = []
-				left_labels = []
+				val          = '' if ! val
+				left_set     = []
+				right_set    = []
+				left_labels  = []
 				right_labels = []
-				#split_on = val.instance_of?("String") ? " a #{val}" : " >= #{val}"
 				set.each do |row|
 					label = row[label_index]
 					if val.instance_of?(String) ? row[index] == val : row[index] >= val
@@ -64,7 +64,7 @@ module Gini
 			end
 		end
 
-		return split_info
+		split_info
 	end
 	
 	# compile count of each label, sum for each unique label the value of ( its count / total count )^2
@@ -82,7 +82,7 @@ module Gini
 			sum += (count_of_each[label]/count)**2
 		end
 
-		return 1 - sum
+		1 - sum
 	end
 
 	# return an array of arrays where each row is an array with the first element is the label and the second is the confidence
@@ -100,6 +100,6 @@ module Gini
 			compiled_labels.push( [key, label_count[key] / list_size ] )
 		end
 
-		return compiled_labels
+		compiled_labels
 	end
 end

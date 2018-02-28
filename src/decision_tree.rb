@@ -11,15 +11,15 @@ class DecisionTree
 
 	def build_tree(set)
 		split = split_set(set)
-		node = Node.new(nil, nil, split[:split_on], split[:labels])
+		node = Node.new(split_on: split[:split_on], labels: split[:labels])
 
-		# is leaf
+		# is not leaf
 		if split[:info_gain] != 0
 			node.left = build_tree(split[:left_set])
 			node.right = build_tree(split[:right_set])
 		end
 		
-		return node
+		node
 	end
 
 	def pretty_print(node, level = 0)
@@ -43,7 +43,5 @@ class DecisionTree
 		if node.right
 			pretty_print( node.right, level)
 		end
-
-		return
 	end
 end

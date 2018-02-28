@@ -4,7 +4,7 @@ class Node
 	attr_accessor :split_on  # array in the form [<index>, <value to check>]
 	attr_accessor :labels    # array of array in the form [[<label1, <confidence>], [<label2>, <confidence>] ... ]
 
-	def initialize(right = nil, left = nil, split_on = [], labels = [])
+	def initialize(right: nil, left: nil, split_on: [], labels: [])
 		@right    = right
 		@left     = left
 		@split_on = split_on
@@ -12,7 +12,7 @@ class Node
 	end
 
 	def is_leaf?
-		return @right.nil? && @left.nil?
+		@right.nil? && @left.nil?
 	end
 
 	def vote
@@ -22,7 +22,7 @@ class Node
 		index = @split_on[0]
 		split = @split_on[1]
 		split_str = split.instance_of?(String) ? split : ">= #{split}"
-		return "Index #{index} : #{split_str}"
+		"Index #{index} : #{split_str}"
 	end
 
 	def display_labels
@@ -33,7 +33,7 @@ class Node
 			labels_str += "#{label}: #{confidence}  "
 		end
 
-		return labels_str
+		labels_str
 	end
 
 	def vote
@@ -51,6 +51,6 @@ class Node
 		end
 
 		# of the labels, all with the highest confidence value, return a random one
-		return contenders.sample
+		contenders.sample
 	end
 end
