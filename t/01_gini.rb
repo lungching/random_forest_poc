@@ -1,6 +1,5 @@
 require_relative "../src/gini.rb"
 require 'pry'
-include Gini
 require "test/unit"
 
 class TestGini < Test::Unit::TestCase
@@ -12,7 +11,8 @@ class TestGini < Test::Unit::TestCase
 			['red', 1, 'grape'],
 			['yellow', 3, 'lemon'],
 		]
-		ginis = split_set( test_data )
+		g = Gini.new
+		ginis = g.split_set( test_data )
 		assert_equal({
 			:split_on => [1, 3],
 			:left_set => [["red", 1, "grape"], ["red", 1, "grape"]],
@@ -26,7 +26,8 @@ class TestGini < Test::Unit::TestCase
 			['red', 1, 'grape'],
 			['red', 1, 'grape'],
 		]
-		ginis = split_set( test_data )
+		g =Gini.new
+		ginis = g.split_set( test_data )
 		assert_equal({
 			:split_on => "",
 			:info_gain => 0.0,

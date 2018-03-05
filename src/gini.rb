@@ -1,4 +1,10 @@
-module Gini
+class Gini
+	attr_accessor :random_attrs     # if true then at each split only a subset of all all the attributes will be considered
+
+	def initialize(random_attrs: false)
+		@random_attrs = random_attrs
+	end
+
 	def split_set(set)
 		tree = proc { Hash.new { |hash, key| hash[key] = tree.call } };
 		attrs = tree.call
@@ -9,7 +15,8 @@ module Gini
 			row.each_with_index do |val, i|
 				# skip if last column since that's the label
 				next if i == label_index
-				attrs[i][val] = 1
+				attrs[i][:val] = val
+				attrs[i][:include] = random_attrs ? Random.rand(row.length) > row.length / 3.0 : true
 			end
 		end
 
@@ -25,41 +32,40 @@ module Gini
 			info_gain: 0,
 		}
 		attrs.keys.each do |index|
-			values = attrs[index].keys
-			values.each do |val|
-				val          = '' if ! val
-				left_set     = []
-				right_set    = []
-				left_labels  = []
-				right_labels = []
-				set.each do |row|
-					label = row[label_index]
-					if val.instance_of?(String) ? row[index] == val : row[index] >= val
-						right_labels.push(label)
-						right_set.push(row)
-					else
-						left_labels.push(label)
-						left_set.push(row)
-					end
+			next unless attrs[index][:include]
+			val          = attrs[index][:val] || ''
+			left_set     = []
+			right_set    = []
+			left_labels  = []
+			right_labels = []
+			set.each do |row|
+				row[index] = '' unless row[index]
+				label = row[label_index]
+				if val.instance_of?(String) || row[index].instance_of?(String) ? "#{row[index]}" == "#{val}" : row[index] >= val
+					right_labels.push(label)
+					right_set.push(row)
+				else
+					left_labels.push(label)
+					left_set.push(row)
 				end
+			end
 
-				init_impurity      = calc_impurity( [right_labels, left_labels].flatten )
-				count_of_labels    = right_labels.length + left_labels.length
-				avg_impurity_right = right_labels.length.to_f / count_of_labels.to_f * calc_impurity( right_labels )
-				avg_impurity_left  = left_labels.length.to_f / count_of_labels.to_f * calc_impurity( left_labels )
-				avg_impurity       = avg_impurity_right + avg_impurity_left
-				info_gain          = init_impurity - avg_impurity
+			init_impurity      = calc_impurity( [right_labels, left_labels].flatten )
+			count_of_labels    = right_labels.length + left_labels.length
+			avg_impurity_right = right_labels.length.to_f / count_of_labels.to_f * calc_impurity( right_labels )
+			avg_impurity_left  = left_labels.length.to_f / count_of_labels.to_f * calc_impurity( left_labels )
+			avg_impurity       = avg_impurity_right + avg_impurity_left
+			info_gain          = init_impurity - avg_impurity
 
-				if split_info[:info_gain] <= info_gain
-					split_info[:info_gain] = info_gain
-					split_info[:left_set]  = left_set
-					split_info[:right_set] = right_set
+			if split_info[:info_gain] <= info_gain
+				split_info[:info_gain] = info_gain
+				split_info[:left_set]  = left_set
+				split_info[:right_set] = right_set
 
-					if info_gain > 0
-						split_info[:split_on] = [index, val]
-					else
-						split_info[:labels] = label_list( [left_labels,right_labels].flatten )
-					end
+				if info_gain > 0
+					split_info[:split_on] = [index, val]
+				else
+					split_info[:labels] = label_list( [left_labels,right_labels].flatten )
 				end
 			end
 		end
