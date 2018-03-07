@@ -27,6 +27,21 @@ class DecisionTree
 		node
 	end
 
+	def categorize( set, node = @root_node )
+		label = node.vote
+		return label if label
+
+		index = node.split_on[0]
+		split = node.split_on[1]
+
+		go_right = split.instance_of?(String) || set[index].instance_of?(String) ? set[index] == split : set[index] >= split
+		if go_right
+			categorize(set, node.right)
+		else
+			categorize(set, node.left)
+		end
+	end
+
 	def pretty_print(node = nil, level = 0)
 		node = @root_node unless node
 		level += 1
