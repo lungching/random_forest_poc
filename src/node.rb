@@ -41,6 +41,7 @@ class Node
 
 		highest_conf = 0.0
 		contenders = []
+		return nil unless labels
 		labels.each do | label, confidence |
 			if confidence > highest_conf
 				highest_conf = confidence
