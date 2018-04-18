@@ -16,6 +16,8 @@ class Gini
 				# skip if last column since that's the label
 				next if i == label_index
 				attrs[i][:val] = val
+
+        # if using a random number of attributes is enabled then set a marker if a given random number is greater than the number of attributes divided by 3
 				attrs[i][:include] = random_attrs ? Random.rand(row.length) > row.length / 3.0 : true
 			end
 		end
@@ -31,7 +33,11 @@ class Gini
 			right_set: [],
 			info_gain: 0,
 		}
-		attrs.keys.each do |index|
+
+    init_impurity = nil
+    count_of_labels = nil
+    num_keys = attrs.keys.length
+		attrs.keys.sample( num_keys ).each do |index|
 			next unless attrs[index][:include]
 			val          = attrs[index][:val] || ''
 			left_set     = []
@@ -41,7 +47,7 @@ class Gini
 			set.each do |row|
 				row[index] = '' unless row[index]
 				label = row[label_index]
-				if val.instance_of?(String) || row[index].instance_of?(String) ? "#{row[index]}" == "#{val}" : row[index] >= val
+				if val.instance_of?(String) || row[index].instance_of?(String) ? row[index].to_s == val.to_s : row[index] >= val
 					right_labels.push(label)
 					right_set.push(row)
 				else
@@ -50,8 +56,8 @@ class Gini
 				end
 			end
 
-			init_impurity      = calc_impurity( [right_labels, left_labels].flatten )
-			count_of_labels    = right_labels.length + left_labels.length
+			init_impurity      ||= calc_impurity( [right_labels, left_labels].flatten )
+			count_of_labels    ||= right_labels.length + left_labels.length
 			avg_impurity_right = right_labels.length.to_f / count_of_labels.to_f * calc_impurity( right_labels )
 			avg_impurity_left  = left_labels.length.to_f / count_of_labels.to_f * calc_impurity( left_labels )
 			avg_impurity       = avg_impurity_right + avg_impurity_left
@@ -62,7 +68,7 @@ class Gini
 				split_info[:left_set]  = left_set
 				split_info[:right_set] = right_set
 
-				if info_gain > 0
+				if info_gain.to_i > 0
 					split_info[:split_on] = [index, val]
 				else
 					split_info[:labels] = label_list( [left_labels,right_labels].flatten )
