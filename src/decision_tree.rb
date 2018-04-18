@@ -19,9 +19,9 @@ class DecisionTree
 		@root_node = node unless @root_node
 
 		# is not leaf
-		if split[:info_gain] != 0
-			node.left = build_tree(split[:left_set])
-			node.right = build_tree(split[:right_set])
+		if split[:info_gain].to_i != 0
+			node.left = build_tree(split[:left_set]) unless split[:left_set].nil?
+			node.right = build_tree(split[:right_set]) unless split[:right_set].nil?
 		end
 		
 		node
@@ -34,7 +34,9 @@ class DecisionTree
 		index = node.split_on[0]
 		split = node.split_on[1]
 
+    go_right = true
 		go_right = split.instance_of?(String) || set[index].instance_of?(String) ? set[index] == split : set[index] >= split
+
 		if go_right
 			categorize(set, node.right)
 		else
