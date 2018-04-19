@@ -68,7 +68,7 @@ class Gini
 				split_info[:left_set]  = left_set
 				split_info[:right_set] = right_set
 
-				if info_gain.to_i > 0
+				if info_gain.round(10) > 0.0
 					split_info[:split_on] = [index, val]
 				else
 					split_info[:labels] = label_list( [left_labels,right_labels].flatten )

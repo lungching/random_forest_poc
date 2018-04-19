@@ -19,7 +19,7 @@ class DecisionTree
 		@root_node = node unless @root_node
 
 		# is not leaf
-		if split[:info_gain].to_i != 0
+		if split[:info_gain] != 0.0
 			node.left = build_tree(split[:left_set]) unless split[:left_set].nil?
 			node.right = build_tree(split[:right_set]) unless split[:right_set].nil?
 		end
