@@ -29,7 +29,7 @@ class DecisionTree
 
 	def categorize( set, node = @root_node )
 		label = node.vote
-		return label if label
+		return label if ! label.nil? && label != '' && node.split_on.empty?
 
 		index = node.split_on[0]
 		split = node.split_on[1]

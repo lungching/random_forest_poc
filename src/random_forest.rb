@@ -29,7 +29,7 @@ class RandomForest
 
 			if leader[:label] == label
 				leader[:votes] += 1
-			else
+			elsif leader[:votes] < votes[label]
 				leader[:label] = label
 				leader[:votes] = votes[label]
 			end

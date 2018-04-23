@@ -12,13 +12,15 @@ class Gini
 
 		# for each attribute by index (except for the label) collect the unique set of values for that attribute
 		set.each do |row|
+      dont_include_num = 0
 			row.each_with_index do |val, i|
 				# skip if last column since that's the label
 				next if i == label_index
 				attrs[i][:val] = val
 
         # if using a random number of attributes is enabled then set a marker if a given random number is greater than the number of attributes divided by 3
-				attrs[i][:include] = random_attrs ? Random.rand(row.length) > row.length / 3.0 : true
+				attrs[i][:include] = random_attrs && (dont_include_num < (row.length - 3)) ? Random.rand(9) != 0 : true
+        dont_include_num += 1 unless attrs[i][:include]
 			end
 		end
 
@@ -29,9 +31,10 @@ class Gini
 
 		split_info = {
 			split_on: '',
+      labels: '',
 			left_set: [],
 			right_set: [],
-			info_gain: 0,
+			info_gain: 0.0,
 		}
 
     init_impurity = nil
@@ -58,22 +61,26 @@ class Gini
 
 			init_impurity      ||= calc_impurity( [right_labels, left_labels].flatten )
 			count_of_labels    ||= right_labels.length + left_labels.length
-			avg_impurity_right = right_labels.length.to_f / count_of_labels.to_f * calc_impurity( right_labels )
-			avg_impurity_left  = left_labels.length.to_f / count_of_labels.to_f * calc_impurity( left_labels )
-			avg_impurity       = avg_impurity_right + avg_impurity_left
-			info_gain          = init_impurity - avg_impurity
+			avg_impurity_right   = right_labels.length.to_f / count_of_labels.to_f * calc_impurity( right_labels )
+			avg_impurity_left    = left_labels.length.to_f / count_of_labels.to_f * calc_impurity( left_labels )
+			avg_impurity         = avg_impurity_right + avg_impurity_left
+			info_gain            = init_impurity - avg_impurity
+      info_gain            = info_gain.round(20)
+
 
 			if split_info[:info_gain] <= info_gain
 				split_info[:info_gain] = info_gain
 				split_info[:left_set]  = left_set
 				split_info[:right_set] = right_set
 
-				if info_gain.round(10) > 0.0
+				if info_gain > 0.0
 					split_info[:split_on] = [index, val]
 				else
 					split_info[:labels] = label_list( [left_labels,right_labels].flatten )
 				end
 			end
+
+      split_info[:labels] = label_list( [left_labels,right_labels].flatten ) unless split_info[:split_on]
 		end
 
 		split_info
