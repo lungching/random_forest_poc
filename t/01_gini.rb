@@ -14,6 +14,7 @@ class TestGini < Test::Unit::TestCase
     g = Gini.new
     ginis = g.split_set(test_data)
     assert_equal({
+      labels: '',
       split_on: [1, 3],
       left_set: [['red', 1, 'grape'], ['red', 1, 'grape']],
       right_set: [['green', 3, 'apple'], ['yellow', 3, 'apple'], ['yellow', 3, 'lemon']],
