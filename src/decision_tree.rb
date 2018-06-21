@@ -48,19 +48,20 @@ class DecisionTree
   def pretty_print(node = nil, level = 0)
     node ||= @root_node
     level += 1
-    puts "Level #{level}"
+    str = "Level #{level}"
     tabs = ''
     level.times do
       tabs += "\t"
     end
 
     if node.is_leaf?
-      puts "#{tabs}Leaf: #{node.display_labels}"
+      str += "#{tabs}Leaf: #{node.display_labels}\n"
     else
-      puts "#{tabs}#{node.display_split_on}"
+      str += "#{tabs}#{node.display_split_on}\n"
     end
 
-    pretty_print(node.right, level) if node.right
-    pretty_print(node.left, level) if node.left
+    str += pretty_print(node.right, level) if node.right
+    str += pretty_print(node.left, level) if node.left
+    str
   end
 end
